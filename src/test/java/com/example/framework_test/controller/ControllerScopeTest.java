@@ -1,4 +1,4 @@
-package com.example.framework_test;
+package com.example.framework_test.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,5 +53,24 @@ public class ControllerScopeTest {
         // Controller prototype bo'lsa, ID lar farq qilishi kerak
         assertThat(id1).isNotEqualTo(id2);
     }
+
+    @Test
+    public void testRequestScopeBeanInsideSingletonController() throws Exception {
+        // Birinchi request
+        MvcResult result1 = mockMvc.perform(get("/request-scope"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String id1 = result1.getResponse().getContentAsString();
+
+        // Ikkinchi request
+        MvcResult result2 = mockMvc.perform(get("/request-scope"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String id2 = result2.getResponse().getContentAsString();
+
+        // Har bir request yangi instance yaratishi kerak
+        assertThat(id1).isNotEqualTo(id2);
+    }
+
 
 }
